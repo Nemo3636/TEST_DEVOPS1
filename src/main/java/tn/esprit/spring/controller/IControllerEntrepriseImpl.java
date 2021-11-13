@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 
+import javassist.NotFoundException;
 import tn.esprit.spring.entities.Departement;
 import tn.esprit.spring.entities.Entreprise;
 import tn.esprit.spring.services.IEmployeService;
@@ -34,7 +35,12 @@ public class IControllerEntrepriseImpl{
 	}
 	public Entreprise getEntrepriseById(int entrepriseId) {
 
-		return ientrepriseservice.getEntrepriseById(1);
+		try {
+			return ientrepriseservice.getEntrepriseById(entrepriseId);
+		} catch (NotFoundException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public int ajouterDepartement(Departement dep) {

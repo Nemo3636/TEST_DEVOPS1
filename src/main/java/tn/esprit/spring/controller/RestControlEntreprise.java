@@ -6,13 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import tn.esprit.spring.entities.Departement;
+import javassist.NotFoundException;
 import tn.esprit.spring.entities.Entreprise;
 import tn.esprit.spring.services.IEmployeService;
 import tn.esprit.spring.services.IEntrepriseService;
@@ -28,16 +26,6 @@ public class RestControlEntreprise {
 	IEntrepriseService ientrepriseservice;
 	@Autowired
 	ITimesheetService itimesheetservice;
-	
-	// Ajouter Entreprise : http://localhost:8081/SpringMVC/servlet/ajouterEntreprise
-	//{"id":1,"name":"SSII Consulting","raisonSocial":"Cite El Ghazela"}
-
-	@PostMapping("/ajouterEntreprise")
-	@ResponseBody
-	public int ajouterEntreprise(@RequestBody Entreprise ssiiConsulting) {
-		ientrepriseservice.ajouterEntreprise(ssiiConsulting);
-		return ssiiConsulting.getId();
-	}
 	
 	// http://localhost:8081/SpringMVC/servlet/affecterDepartementAEntreprise/1/1
     @PutMapping(value = "/affecterDepartementAEntreprise/{iddept}/{identreprise}") 
@@ -58,26 +46,20 @@ public class RestControlEntreprise {
     @ResponseBody
 	public Entreprise getEntrepriseById(@PathVariable("identreprise") int entrepriseId) {
 
-		return ientrepriseservice.getEntrepriseById(entrepriseId);
-	}
-    
-    // http://localhost:8081/SpringMVC/servlet/ajouterDepartement
- 	//{"id":1,"name":"Telecom"}
-
- 	@PostMapping("/ajouterDepartement")
- 	@ResponseBody
-	public int ajouterDepartement(@RequestBody Departement dep) {
-		return ientrepriseservice.ajouterDepartement(dep);
+		try {
+			return ientrepriseservice.getEntrepriseById(entrepriseId);
+		} catch (NotFoundException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
- 	 // http://localhost:8081/SpringMVC/servlet/getAllDepartementsNamesByEntreprise/1
     @GetMapping(value = "getAllDepartementsNamesByEntreprise/{identreprise}")
     @ResponseBody
 	public List<String> getAllDepartementsNamesByEntreprise(@PathVariable("identreprise") int entrepriseId) {
 		return ientrepriseservice.getAllDepartementsNamesByEntreprise(entrepriseId);
 	}
 
-    // URL : http://localhost:8081/SpringMVC/servlet/deleteDepartementById/3
     @DeleteMapping("/deleteDepartementById/{iddept}") 
 	@ResponseBody 
 	public void deleteDepartementById(@PathVariable("iddept") int depId) {
